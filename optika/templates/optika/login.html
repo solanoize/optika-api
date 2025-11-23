@@ -1,0 +1,20 @@
+{% extends "base.html"  %}
+
+{% block title %}Optika{% endblock %}
+
+{% block content %}
+  <h2>Login</h2>
+  <form method="POST">
+      {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+      <tfoot>
+        <tr>
+          <td colspan="2">
+            <button type="submit">Login</button>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </form>
+{% endblock %}

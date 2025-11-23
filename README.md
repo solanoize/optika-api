@@ -166,6 +166,28 @@ Berikut adalah endpoint utama yang tersedia. Semua endpoint berada di bawah pref
 
 ---
 
+## Insomnia Collection
+
+Proyek ini menyertakan file ekspor Insomnia (`Insomnia_Optika_API_2025-11-23.json`) yang berisi koleksi semua endpoint API yang telah dikonfigurasi sebelumnya untuk pengujian yang mudah.
+
+Untuk menggunakannya:
+1. Buka Insomnia.
+2. Buka `Preferences` > `Data`.
+3. Klik `Import Data` > `From File`.
+4. Pilih file `Insomnia_Optika_API_2025-11-23.json` dari direktori proyek.
+
+Ini akan mengimpor semua request API, termasuk otentikasi.
+
+**Konfigurasi Lingkungan (Environment) Insomnia:**
+Setelah mengimpor koleksi, Anda perlu mengkonfigurasi environment di Insomnia. Buat environment baru atau edit environment yang sudah ada dan tambahkan variabel berikut:
+
+- `BASE_URL`: URL dasar API Anda. Contoh: `http://localhost:8000`
+- `TOKEN`: Token autentikasi JWT Anda (akan diisi setelah login).
+- `PREFIX_TOKEN`: Prefiks untuk token (biasanya `Bearer`).
+- `APPLICATION_NAMESPACE`: Namespace aplikasi (sesuai dengan konfigurasi URL Anda, misalnya `api/optika`).
+
+---
+
 ## Lisensi
 
 Proyek ini dilisensikan di bawah Lisensi MIT.

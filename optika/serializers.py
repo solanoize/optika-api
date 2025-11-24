@@ -111,7 +111,7 @@ class OrderItemCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"price": [f"Invalid price {price}."]})
 
         if product.price * quantity != subtotal:
-            raise serializers.ValidationError({"quantity": [f"Invalid subtotal {subtotal}."]})
+            raise serializers.ValidationError({"subtotal": [f"Invalid subtotal {subtotal}."]})
 
         return attrs
 

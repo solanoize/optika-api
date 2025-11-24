@@ -98,24 +98,39 @@ class OrderItemCreateSerializer(serializers.ModelSerializer):
         fields = ['product', 'quantity', 'price', 'subtotal']
 
     def validate(self, attrs):
+        errors = {}
+
         product = attrs['product']
         quantity = attrs['quantity']
         price = attrs['price']
         subtotal = attrs['subtotal']
 
-        if product.stock <= 0:
-            raise serializers.ValidationError({"quantity": [
-                f"Quantity must be greater than 0."]})
+        # quantity
+        if quantity <= 0:
+            errors.setdefault('quantity', []).append(
+                "Quantity must be greater than 0."
+            )
 
         if product.stock < quantity:
-            raise serializers.ValidationError({"quantity": [
-                f"Quantity {quantity} large than product stock {product.stock}."]})
+            errors.setdefault('quantity', []).append(
+                f"Quantity {quantity} larger than product stock {product.stock}."
+            )
 
+        # price
         if product.price != price:
-            raise serializers.ValidationError({"price": [f"Invalid price {price}."]})
+            errors.setdefault('price', []).append(
+                f"Invalid price {price}."
+            )
 
+        # subtotal
         if product.price * quantity != subtotal:
-            raise serializers.ValidationError({"subtotal": [f"Invalid subtotal {subtotal}."]})
+            errors.setdefault('subtotal', []).append(
+                f"Invalid subtotal {subtotal}."
+            )
+
+        # kalau ada error, raise semuanya sekaligus
+        if errors:
+            raise serializers.ValidationError(errors)
 
         return attrs
 
@@ -146,30 +161,52 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         fields = ['order_number', 'date', 'customer', 'total', 'paid_amount', 'change_amount', 'order_items']
 
     def validate(self, attrs):
-        order_items = attrs['order_items']
-        total = attrs['total']
-        paid_amount = attrs['paid_amount']
-        change_amount = attrs['change_amount']
+        errors = {}
 
+        order_items = attrs['order_items']
+        total = int(attrs['total'])
+        paid_amount = int(attrs['paid_amount'])
+        change_amount = int(attrs['change_amount'])
+
+        if not order_items:
+            errors.setdefault('order_items', []).append(
+                f"Order items must be set."
+            )
+
+        # --- Cek duplicate product ---
         seen = set()
         for item in order_items:
             product = item['product']
             if product.id in seen:
-                raise serializers.ValidationError({"product": [f"Duplicate {product.name} product in order."]})
-            seen.add(product.id)
+                errors.setdefault('order_items', []).append(
+                    f"Duplicate product: {product.name}"
+                )
+            else:
+                seen.add(product.id)
 
-        calculated_total = sum([order_item['subtotal'] for order_item in order_items])
-
+        # --- Cek total ---
+        calculated_total = sum(order_item['subtotal'] for order_item in order_items)
         if calculated_total != total:
-            raise serializers.ValidationError("Invalid total.")
+            errors.setdefault('total', []).append(
+                f"Invalid total {total}, should be {calculated_total}."
+            )
 
+        # --- Cek paid amount ---
         if paid_amount < total:
-            raise serializers.ValidationError("Invalid paid amount.")
+            errors.setdefault('paid_amount', []).append(
+                f"Paid amount {paid_amount} is less than total {total}."
+            )
 
-        calculated_change_amount = paid_amount - total
+        # --- Cek change amount ---
+        calculated_change = paid_amount - total
+        if calculated_change != change_amount:
+            errors.setdefault('change_amount', []).append(
+                f"Invalid change amount {change_amount}, should be {calculated_change}."
+            )
 
-        if calculated_change_amount != change_amount:
-            raise serializers.ValidationError("Invalid change amount.")
+        # Jika ada error, lempar semuanya
+        if errors:
+            raise serializers.ValidationError(errors)
 
         return attrs
 

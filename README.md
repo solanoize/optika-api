@@ -77,27 +77,23 @@ a. Buat file bernama `.env` di direktori root proyek.
 b. Salin dan tempel konten berikut ke dalam file `.env` Anda dan isi nilainya sesuai dengan pengaturan lokal Anda.
 
 ```env
-# Kunci rahasia Django (buat kunci acak yang kuat untuk produksi)
-SECRET_KEY='ganti-dengan-kunci-rahasia-django-yang-aman'
-
-# Mode Debug (atur ke False di produksi)
+# === CORE ===
+SECRET_KEY=<yourkey>
 DEBUG=True
-
-# Host yang diizinkan (ganti dengan domain Anda di produksi)
 ALLOWED_HOSTS=127.0.0.1,localhost
 
-# Pengaturan Database MySQL
-DB_NAME=glaser_db
+# === DATABASE (MySQL) ===
+DB_NAME=<yourdb>
 DB_USER=root
-DB_PASSWORD=password_database_anda
+DB_PASSWORD=<yourpassword>
 DB_HOST=127.0.0.1
 DB_PORT=3306
 
-# Pengaturan Otentikasi JWT
-TOKEN_IN_DAYS=30
+# === CORS ===
+CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5500,http://localhost:3000
 
-# Pengaturan CORS (ganti dengan domain frontend Anda di produksi)
-CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+# === TOKEN LIFE TIME ===
+TOKEN_IN_DAYS=90
 ```
 **Penting:** Pastikan file `.env` ditambahkan ke `.gitignore` Anda agar tidak terekspos di repositori Git Anda.
 

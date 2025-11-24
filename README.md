@@ -51,7 +51,7 @@ Sangat disarankan untuk menggunakan lingkungan virtual (virtual environment) unt
 **Di Windows:**
 ```bash
 python -m venv .venv
-.\.venv\Scripts\activate
+.venv\Scripts\activate
 ```
 
 **Di macOS/Linux:**

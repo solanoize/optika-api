@@ -103,6 +103,10 @@ class OrderItemCreateSerializer(serializers.ModelSerializer):
         price = attrs['price']
         subtotal = attrs['subtotal']
 
+        if product.stock <= 0:
+            raise serializers.ValidationError({"quantity": [
+                f"Quantity must be greater than 0."]})
+
         if product.stock < quantity:
             raise serializers.ValidationError({"quantity": [
                 f"Quantity {quantity} large than product stock {product.stock}."]})
